@@ -3,54 +3,55 @@
 # Led by Dr. Korah
 # SIFT Scale Space. Loads images and presents user with 4 octaves and 4 blur levels 
 
+
 import cv2
 import numpy as np
 import copy
+import os
 
-def checkDestroy():     #check if needs to be destroyed
-    k = cv2.waitKey(0) & 0xFF
+global img
+global images
+global oNum
+global bNum
 
-    if k == 27:
-        cv2.destroyAllWindows()
+def main():
+    img = cv2.imread('cat_image.jpg')
+    img = cv2.resize(img, (0,0), fx = 2, fy = 2)    #double initial image
+    
+    oNum = input("How many octave levels: ") #number of octaves
+    bNum = input("How many blur levels: ")   #number of blurs
 
-def calculateOctave(image):     #calculate each blur image in octave
-    listOfImages[0] = image
-    listOfImages[1] = cv2.GaussianBlur(image, (3,3), 0)
-    listOfImages[2] = cv2.GaussianBlur(image, (5,5), 0)
-    listOfImages[3] = cv2.GaussianBlur(image, (7,7), 0)
-    listOfImages[4] = cv2.GaussianBlur(image, (9,9), 0)
+    rows, cols, _channels = map(int, img.shape)     #retrieves rows and cols
 
-def printOctave(theList, octave):    #prints octave with given starting image, list of blurred images, and octave level num
-    blurLvl = 1
-    cv2.imshow('Octave ' + str(octave), theList[0])    #deleting does now allow printing octave
-    for x in range(1,5): 
+    scalingImg = img
+    printOctave(img, 1, int(bNum))
+    x = 2
+    while x <= int(oNum):
+        scalingImg = cv2.pyrDown(scalingImg, dstsize = (cols // 2, rows // 2))    #halfs image size
+        rows, cols, _channels = map(int, scalingImg.shape)     #updates rows and cols
+        printOctave(scalingImg, x, int(bNum))
+        x = x + 1
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+def printOctave(image, oNumLvl, bNum):
+    tempImg = image
+    cv2.imshow('Octave ' + str(oNumLvl), tempImg)
+    blurLvlNum = 3
+    levelNum = 1
+
+    for x in range(bNum):
+        tempImg = cv2.GaussianBlur(tempImg, (blurLvlNum, blurLvlNum), 0)
         k = cv2.waitKey(0) & 0xFF
         if k == 32:
-            cv2.imshow('Octave ' + str(octave) + ': Blur ' + str(blurLvl), theList[x])
-            blurLvl = blurLvl + 1
+            cv2.imshow('Octave ' + str(oNumLvl) + ': Blur ' + str(levelNum), tempImg)
+            levelNum = levelNum + 1
+            blurLvlNum = blurLvlNum + 2
         elif k == 27:
             cv2.destroyAllWindows()
-    checkDestroy()    
-
-octaveLvl = 0   #current octave
-img = cv2.imread('cat_image.jpg')               # grabbing image
-rows, cols, _channels = map(int, img.shape)     #retrieves rows and cols
-blur1 = blur2 = blur3 = blur4 = img             #initializing blur images
-listOfImages = [img, blur1, blur2, blur3, blur4] #initializing listOfImages
-
-
-calculateOctave(img)
-octaveLvl = octaveLvl + 1
-printOctave(listOfImages, octaveLvl)
-cv2.destroyAllWindows()
-
-for i in range(1, 4):
-    img = cv2.pyrDown(img, dstsize=(cols // 2, rows // 2)) #halfs image size
-    rows, cols, _channels = map(int, img.shape)
-    calculateOctave(img)
-    octaveLvl = octaveLvl + 1
-    printOctave(listOfImages, octaveLvl)
+    cv2.waitKey(0)
     cv2.destroyAllWindows()
-    
 
+main()
 
+             
