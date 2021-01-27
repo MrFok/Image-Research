@@ -54,7 +54,7 @@ def locateApxKeypoints(imgT, imgC, imgB):    #locating approx. keypoints and com
     
     for i in range(1, rows - 1):
         for j in range(1, cols - 1):
-            
+         
     
 
 

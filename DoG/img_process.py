@@ -15,11 +15,12 @@ global oNum
 global bNum
 
 def main():
+    print("SIFT Demo - DoG\nMade by Ricky Fok")
     img = cv2.imread('cat_image.jpg')
     img = cv2.resize(img, (0,0), fx = 2, fy = 2)    #double initial image
     
-    oNum = input("How many octave levels: ") #number of octaves
-    bNum = input("How many blur levels: ")   #number of blurs
+    oNum = input("How many octave levels? : ") #number of octaves
+    bNum = input("How many blur levels? : ")   #number of blurs
 
     rows, cols, _channels = map(int, img.shape)     #retrieves rows and cols
 
